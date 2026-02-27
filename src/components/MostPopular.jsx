@@ -8,7 +8,7 @@ export default function MostPopular() {
 
           <div className="lg:w-1/2 bg-[#F3E5F5] relative min-h-[400px] lg:min-h-[500px]">
             <img 
-              src="../../public/motocurier.jpg"
+              src="/motocurier.jpg"
               alt="Fast Delivery Man" 
               className="absolute inset-0 w-full h-full object-cover object-center"
             />
@@ -25,7 +25,7 @@ export default function MostPopular() {
             <div className="flex flex-col items-center p-6 border border-gray-200 rounded-lg hover:shadow-md transition-shadow bg-white">
               <div className="w-48 h-48 mb-4">
                 <img 
-                  src="../../public/meat.jpg"
+                  src="/meat.jpg"
 
                   alt="Popular Product"
                   className="w-full h-full object-contain"

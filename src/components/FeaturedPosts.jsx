@@ -8,7 +8,7 @@ const posts = [
     description: "We focus on ergonomics and meeting you where you work. It's only a keystroke away.",
     date: "22 April 2021",
     comments: "10",
-    image: "/public/post-3.jpg" 
+    image: "/post-3.jpg" 
   },
   {
     id: 2,
@@ -17,7 +17,7 @@ const posts = [
     description: "We focus on ergonomics and meeting you where you work. It's only a keystroke away.",
     date: "22 April 2021",
     comments: "10",
-    image: "/public/post-2.jpg"
+    image: "/post-2.jpg"
   },
   {
     id: 3,
@@ -26,7 +26,7 @@ const posts = [
     description: "We focus on ergonomics and meeting you where you work. It's only a keystroke away.",
     date: "22 April 2021",
     comments: "10",
-    image: "/public/post-1.jpg"
+    image: "/post-1.jpg"
   }
 ];
 

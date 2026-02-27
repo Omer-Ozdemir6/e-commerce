@@ -4,7 +4,7 @@ export default function Hero() {
 
       <div className="absolute inset-0 z-0">
         <img 
-          src="../../public/hero.jpg"
+          src="/hero.jpg"
           alt="Food Background" 
           className="w-full h-full object-cover opacity-60"
         />

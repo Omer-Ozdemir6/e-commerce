@@ -1,7 +1,7 @@
 const categories = [
-  { id: 1, title: "Unique Life", sub: "Explore Items", img: "../../public/iceCream.png" },
-  { id: 2, title: "Elements Style", sub: "Explore Items", img: "../../public/apple.jpg" },
-  { id: 3, title: "Elements Style", sub: "Explore Items", img: "../../public/meats.jpg" },
+  { id: 1, title: "Unique Life", sub: "Explore Items", img: "/iceCream.png" },
+  { id: 2, title: "Elements Style", sub: "Explore Items", img: "/apple.jpg" },
+  { id: 3, title: "Elements Style", sub: "Explore Items", img: "/meats.jpg" },
 ];
 
 export default function CategoryCards() {

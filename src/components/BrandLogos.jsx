@@ -1,11 +1,11 @@
 export default function BrandLogos() {
   const logos = [
-    { id: 1, src: "/public/hooli.png", alt: "Hooli" },
-    { id: 2, src: "/public/lyft.png", alt: "Lyft" },
-    { id: 3, src: "/public/yaprak.png", alt: "Pied Piper" },
-    { id: 4, src: "/public/stripe.png", alt: "Stripe" },
-    { id: 5, src: "/public/aws.png", alt: "AWS" },
-    { id: 6, src: "/public/reddit.png", alt: "Reddit" },
+    { id: 1, src: "/hooli.png", alt: "Hooli" },
+    { id: 2, src: "/lyft.png", alt: "Lyft" },
+    { id: 3, src: "/yaprak.png", alt: "Pied Piper" },
+    { id: 4, src: "/stripe.png", alt: "Stripe" },
+    { id: 5, src: "/aws.png", alt: "AWS" },
+    { id: 6, src: "/reddit.png", alt: "Reddit" },
   ];
 
   return (
