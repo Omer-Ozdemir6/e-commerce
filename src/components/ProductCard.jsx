@@ -1,7 +1,10 @@
-export default function ProductCard({ image, title, department, oldPrice, newPrice }) {
+import { Link } from "react-router-dom";
+
+
+export default function ProductCard({ id = 1, image, title, department, oldPrice, newPrice }) {
   return (
 
-    <div className="flex flex-col items-center text-center p-2 hover:shadow-md transition-all cursor-pointer bg-white group">
+    <Link to={`/product/${id}`} className="flex flex-col items-center text-center p-2 hover:shadow-md transition-all cursor-pointer bg-white group">
 
       <div className="w-full max-w-[170px] aspect-square mb-4 overflow-hidden">
         <img 
@@ -22,6 +25,6 @@ export default function ProductCard({ image, title, department, oldPrice, newPri
         <span className="text-gray-300 font-medium">${oldPrice}</span>
         <span className="text-[#23856D]">${newPrice}</span>
       </div>
-    </div>
+    </Link>
   );
 }
