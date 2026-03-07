@@ -1,6 +1,9 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 import Header from './layout/Header';
 import Footer from './components/Footer';
 import HomePage from './pages/HomePage';
@@ -9,6 +12,7 @@ import ProductDetail from './pages/ProductDetail';
 import ContactPage from './pages/ContactPage';
 import TeamPage from './pages/TeamPage';
 import AboutPage from './pages/AboutPage';
+import SignUpPage from './pages/SignupPage';
 
 export default function App() {
   return (
@@ -23,9 +27,15 @@ export default function App() {
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/team" element={<TeamPage />} />
             <Route path="/about" element={<AboutPage />} />
+            <Route path='/signup' element={<SignUpPage />} />
           </Routes>
         </main>
         <Footer />
+        <ToastContainer 
+          position="bottom-right" 
+          autoClose={5000} 
+          theme="colored" 
+        />
       </div>
     </Router>
   );

@@ -20,7 +20,7 @@ export default function AboutPage() {
         </div>
         <div className="flex-1">
 
-          <img src="/about-hero.png" alt="About Us" className="w-full h-auto object-contain" />
+          <img src="/donut.jpg" alt="About Us" className="w-full h-auto object-contain" />
         </div>
       </section>
 
@@ -36,7 +36,7 @@ export default function AboutPage() {
 
       <section className="container mx-auto px-4 md:px-20 py-12">
         <div className="relative w-full aspect-video rounded-2xl overflow-hidden shadow-2xl group cursor-pointer">
-          <img src="/video-bg.jpg" alt="Video Placeholder" className="w-full h-full object-cover transition-transform group-hover:scale-105" />
+          <img src="/hero.jpg" alt="Video Placeholder" className="w-full h-full object-cover transition-transform group-hover:scale-105" />
           <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
             <div className="w-24 h-24 bg-[#23A6F0] rounded-full flex items-center justify-center text-white shadow-lg">
               <div className="w-0 h-0 border-t-[12px] border-t-transparent border-l-[20px] border-l-white border-b-[12px] border-b-transparent ml-2"></div>
@@ -78,7 +78,7 @@ export default function AboutPage() {
           <button className="border border-white text-white px-10 py-3 rounded-md font-bold text-sm w-fit hover:bg-white hover:text-[#2A7CC7] transition-all">Button</button>
         </div>
         <div className="flex-1">
-          <img src="/about-split.jpg" alt="Working" className="w-full h-full object-cover" />
+          <img src="/motocurier.jpg" alt="Working" className="w-full h-full object-cover" />
         </div>
       </section>
 
