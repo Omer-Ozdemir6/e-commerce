@@ -13,6 +13,7 @@ import ContactPage from './pages/ContactPage';
 import TeamPage from './pages/TeamPage';
 import AboutPage from './pages/AboutPage';
 import SignUpPage from './pages/SignupPage';
+import LoginPage from './pages/LoginPage';
 
 export default function App() {
   return (
@@ -28,6 +29,7 @@ export default function App() {
             <Route path="/team" element={<TeamPage />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path='/signup' element={<SignUpPage />} />
+            <Route path="/login" element={<LoginPage />} />
           </Routes>
         </main>
         <Footer />
