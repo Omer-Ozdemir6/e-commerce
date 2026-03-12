@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 import { ToastContainer } from 'react-toastify';
@@ -14,8 +14,16 @@ import TeamPage from './pages/TeamPage';
 import AboutPage from './pages/AboutPage';
 import SignUpPage from './pages/SignupPage';
 import LoginPage from './pages/LoginPage';
+import { useDispatch } from 'react-redux';
+import { verifyToken } from './store/action/clientAction';
 
 export default function App() {
+
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(verifyToken());
+  }, [dispatch]);
+
   return (
     <Router>
       <div className="flex flex-col min-h-screen">

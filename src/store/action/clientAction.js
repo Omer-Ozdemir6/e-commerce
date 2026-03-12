@@ -1,5 +1,6 @@
-import axiosInstance from "../../api/axiosInstance";
+import axiosInstance, { setAuthToken } from "../../api/axiosInstance";
 import md5 from "blueimp-md5";
+import { set } from "react-hook-form";
 import { toast } from "react-toastify";
 
 
@@ -28,6 +29,28 @@ export const fetchRoles = () => (dispatch, getState) => {
                 console.error("Error fetching roles:", error);
             });
     }
+};
+
+export const verifyToken = () => (dispatch) => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    setAuthToken(token);
+
+    return axiosInstance.get("/verify")
+        .then((res) => {
+            const user = res.data;
+            const hash = md5(user.email.trim().toLowerCase());
+            user.avatar = `https://www.gravatar.com/avatar/${hash}?s=200`;
+            dispatch(setUser(user));
+            localStorage.setItem("token", user.token);
+            setAuthToken(user.token);
+        })
+        .catch((err) => {
+            console.error("Token verification failed:", err);
+            localStorage.removeItem("token");
+            setAuthToken(null);
+        });
 };
 
 export const loginUser = (credentials, rememberMe) => (dispatch) => {
