@@ -1,24 +1,25 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Search, User, ShoppingCart, Menu, X, LogOut, ChevronDown } from "lucide-react";
+import { Search, User, ShoppingCart, Menu, X, LogOut, ChevronDown, Trash2 } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
 import { setUser } from "../store/action/clientAction"; 
 import { fetchCategories } from "../store/action/productActions";
+import { removeFromCart } from "../store/action/shoppingCartActions";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isShopOpen, setIsShopOpen] = useState(false);
   
   const user = useSelector((state) => state.client.user);
   const categories = useSelector((state) => state.product.categories);
+  const cart = useSelector((state) => state.shoppingCart.cart);
   
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-
   useEffect(() => {
     dispatch(fetchCategories());
   }, [dispatch]);
+  const totalItemCount = cart.reduce((total, item) => total + item.count, 0);
 
   const mainCourses = categories.filter(cat => cat.gender === 'k');
   const dessertsAndMore = categories.filter(cat => cat.gender === 'e');
@@ -30,6 +31,10 @@ export default function Header() {
     navigate("/");
   };
 
+  const handleRemove = (id) => {
+    dispatch(removeFromCart(id));
+  };
+
   return (
     <header className="w-full border-b border-gray-100 bg-white sticky top-0 z-50">
       <div className="flex items-center justify-between px-4 py-4 md:px-10 lg:px-20 container mx-auto">
@@ -37,26 +42,19 @@ export default function Header() {
         <Link to="/" className="text-2xl font-bold tracking-tight text-slate-800">
           Bandage
         </Link>
-
         <nav className="hidden md:flex space-x-6 text-sm font-semibold text-gray-500 items-center">
           <Link to="/" className="hover:text-blue-500 transition">Home</Link>
-
           <div className="relative group py-2">
             <Link to="/shop" className="hover:text-blue-500 flex items-center gap-1 transition">
               Menü <ChevronDown size={14} />
             </Link>
-
             <div className="absolute hidden group-hover:block bg-white shadow-2xl p-6 min-w-[400px] z-50 rounded-xl border border-gray-100 mt-0 top-full">
               <div className="flex gap-12">
                 <div className="flex-1">
                   <h4 className="font-extrabold text-orange-500 mb-3 border-b pb-2">Ana Yemekler</h4>
                   <div className="flex flex-col gap-2">
                     {mainCourses.map(cat => (
-                      <Link 
-                        key={cat.id} 
-                        to={`/shop/${cat.gender === 'k' ? 'kadin' : 'erkek'}/${cat.code.split(':')[1]}/${cat.id}`}
-                        className="text-sm text-gray-600 hover:text-orange-500 transition-colors"
-                      >
+                      <Link key={cat.id} to={`/shop/${cat.gender === 'k' ? 'kadin' : 'erkek'}/${cat.code.split(':')[1]}/${cat.id}`} className="text-sm text-gray-600 hover:text-orange-500">
                         {cat.title}
                       </Link>
                     ))}
@@ -66,11 +64,7 @@ export default function Header() {
                   <h4 className="font-extrabold text-blue-500 mb-3 border-b pb-2">Tatlılar & Yanlar</h4>
                   <div className="flex flex-col gap-2">
                     {dessertsAndMore.map(cat => (
-                      <Link 
-                        key={cat.id} 
-                        to={`/shop/${cat.gender === 'k' ? 'kadin' : 'erkek'}/${cat.code.split(':')[1]}/${cat.id}`}
-                        className="text-sm text-gray-600 hover:text-blue-500 transition-colors"
-                      >
+                      <Link key={cat.id} to={`/shop/${cat.gender === 'k' ? 'kadin' : 'erkek'}/${cat.code.split(':')[1]}/${cat.id}`} className="text-sm text-gray-600 hover:text-blue-500">
                         {cat.title}
                       </Link>
                     ))}
@@ -79,23 +73,16 @@ export default function Header() {
               </div>
             </div>
           </div>
-
           <Link to="/about" className="hover:text-blue-500 transition">About</Link>
           <Link to="/contact" className="hover:text-blue-500 transition">Contact</Link>
-          <Link to="/team" className="hover:text-blue-500 transition">Team</Link>
         </nav>
 
         <div className="flex items-center space-x-4 text-blue-500 text-sm font-bold">
-
           <div className="hidden md:flex items-center gap-2">
             {user && user.name ? (
               <div className="flex items-center gap-3 border-r pr-4 border-gray-200">
                 <div className="flex items-center gap-2">
-                  <img 
-                    src={user.avatar} 
-                    alt={user.name} 
-                    className="w-8 h-8 rounded-full border border-gray-200 object-cover" 
-                  />
+                  <img src={user.avatar} alt={user.name} className="w-8 h-8 rounded-full object-cover" />
                   <span className="text-slate-800">{user.name}</span>
                 </div>
                 <button onClick={handleLogout} className="text-red-500 hover:text-red-700 flex items-center gap-1">
@@ -113,55 +100,62 @@ export default function Header() {
           </div>
 
           <Search size={20} className="cursor-pointer" />
+          <div className="relative group py-2">
+            <div className="flex items-center gap-1 cursor-pointer">
+              <ShoppingCart size={20} />
+              <span className="font-normal text-xs">{totalItemCount}</span>
+            </div>
+            <div className="absolute hidden group-hover:block bg-white shadow-2xl p-4 min-w-[320px] z-50 rounded-xl border border-gray-100 mt-0 top-full right-0">
+              <h4 className="font-bold text-slate-800 mb-4 border-b pb-2">Sepetim ({totalItemCount} Ürün)</h4>
+              
+              <div className="flex flex-col gap-4 max-h-[400px] overflow-y-auto pr-2">
+                {cart.length === 0 ? (
+                  <p className="text-gray-400 text-xs py-4 text-center">Sepetiniz şu an boş.</p>
+                ) : (
+                  cart.map((item) => (
+                    <div key={item.product.id} className="flex gap-3 items-center border-b border-gray-50 pb-3 last:border-0">
+                      <img 
+                        src={item.product.images?.[0]?.url} 
+                        alt={item.product.name} 
+                        className="w-12 h-12 object-cover rounded shadow-sm"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-bold text-slate-800 truncate">{item.product.name}</p>
+                        <p className="text-[10px] text-gray-500">Adet: {item.count}</p>
+                        <p className="text-xs text-blue-500 font-extrabold">{item.product.price} TL</p>
+                      </div>
+                      <button 
+                        onClick={() => handleRemove(item.product.id)}
+                        className="text-gray-300 hover:text-red-500 transition-colors"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                  ))
+                )}
+              </div>
 
-          <div className="flex items-center gap-1 cursor-pointer">
-            <ShoppingCart size={20} />
-            <span className="font-normal text-xs">1</span>
+              {cart.length > 0 && (
+                <div className="mt-4 flex gap-2">
+                  <Link to="/cart" className="flex-1 bg-blue-500 text-white text-center py-2 rounded-md text-xs hover:bg-blue-600 transition">
+                    Sepete Git
+                  </Link>
+                </div>
+              )}
+            </div>
           </div>
 
-          <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="md:hidden text-slate-800 focus:outline-none">
+          <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="md:hidden text-slate-800">
             {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
           </button>
         </div>
       </div>
-
       {isMenuOpen && (
         <nav className="md:hidden bg-white border-t border-gray-100 py-8 flex flex-col items-center space-y-6 text-2xl text-gray-500 font-normal">
           <Link onClick={() => setIsMenuOpen(false)} to="/">Home</Link>
-
-          <div className="flex flex-col items-center gap-2 border-y py-4 w-full border-gray-50">
-             <span className="text-sm font-bold text-gray-400 uppercase tracking-widest">Menü</span>
-             {categories.slice(0, 6).map(cat => (
-               <Link 
-                key={cat.id}
-                onClick={() => setIsMenuOpen(false)}
-                to={`/shop/${cat.gender === 'k' ? 'kadin' : 'erkek'}/${cat.code.split(':')[1]}/${cat.id}`}
-                className="text-lg text-slate-700"
-               >
-                 {cat.title}
-               </Link>
-             ))}
-          </div>
-
+          <Link onClick={() => setIsMenuOpen(false)} to="/shop">Shop</Link>
           <Link onClick={() => setIsMenuOpen(false)} to="/about">About</Link>
           <Link onClick={() => setIsMenuOpen(false)} to="/contact">Contact</Link>
-
-          <div className="flex flex-col items-center gap-6 pt-4 w-full border-t border-gray-50 mt-4">
-            {user && user.name ? (
-              <div className="flex flex-col items-center gap-4">
-                <img src={user.avatar} alt={user.name} className="w-20 h-20 rounded-full border-2 border-blue-500" />
-                <span className="text-slate-800 font-bold">{user.name}</span>
-                <button onClick={handleLogout} className="text-red-500 flex items-center gap-2 text-xl font-bold">
-                  <LogOut size={24} /> Logout
-                </button>
-              </div>
-            ) : (
-              <div className="flex flex-col items-center gap-4 text-blue-500 font-bold">
-                <Link onClick={() => setIsMenuOpen(false)} to="/login">Login</Link>
-                <Link onClick={() => setIsMenuOpen(false)} to="/signup">Register</Link>
-              </div>
-            )}
-          </div>
         </nav>
       )}
     </header>
