@@ -1,3 +1,12 @@
+import { 
+    ADD_TO_CART, 
+    REMOVE_FROM_CART, 
+    UPDATE_ITEM_COUNT, 
+    TOGGLE_ITEM_CHECK,
+    SET_PAYMENT,
+    SET_ADDRESS 
+} from "../action/shoppingCartActions";
+
 const initialState = {
     cart: [],
     payment: {},
@@ -6,9 +15,8 @@ const initialState = {
 
 const shoppingCartReducer = (state = initialState, action) => {
     switch (action.type) {
-        case "ADD_TO_CART":
+        case ADD_TO_CART:
             const productToAdd = action.payload;
-            
             const existingItem = state.cart.find(
                 (item) => item.product.id === productToAdd.id
             );
@@ -32,10 +40,34 @@ const shoppingCartReducer = (state = initialState, action) => {
                 };
             }
 
-        case "SET_PAYMENT":
+        case UPDATE_ITEM_COUNT:
+            return {
+                ...state,
+                cart: state.cart.map((item) =>
+                    item.product.id === action.payload.productId
+                        ? { ...item, count: Math.max(1, action.payload.count) }
+                        : item
+                )
+            };
+        case REMOVE_FROM_CART:
+            return {
+                ...state,
+                cart: state.cart.filter((item) => item.product.id !== action.payload)
+            };
+        case TOGGLE_ITEM_CHECK:
+            return {
+                ...state,
+                cart: state.cart.map((item) =>
+                    item.product.id === action.payload
+                        ? { ...item, checked: !item.checked }
+                        : item
+                )
+            };
+
+        case SET_PAYMENT:
             return { ...state, payment: action.payload };
             
-        case "SET_ADDRESS":
+        case SET_ADDRESS:
             return { ...state, address: action.payload };
             
         default:
