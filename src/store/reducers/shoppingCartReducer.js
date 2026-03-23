@@ -8,20 +8,30 @@ import {
 } from "../action/shoppingCartActions";
 
 export const SET_ADDRESS_LIST = "SET_ADDRESS_LIST";
+export const SET_CARD_LIST = "SET_CARD_LIST";
 
 const initialState = {
     cart: [],
     payment: {},
     address: {},
-    addressList: []
+    addressList: [],
+    cardList: []
 };
 
 const shoppingCartReducer = (state = initialState, action) => {
     switch (action.type) {
+
         case SET_ADDRESS_LIST:
             return {
                 ...state,
                 addressList: action.payload
+            };
+
+
+        case SET_CARD_LIST:
+            return {
+                ...state,
+                cardList: action.payload
             };
 
         case ADD_TO_CART:
