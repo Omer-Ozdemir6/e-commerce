@@ -8,6 +8,7 @@ export default function CartPage() {
     const { cart } = useSelector((state) => state.shoppingCart);
     const dispatch = useDispatch();
     const navigate = useNavigate();
+
     const totalAmount = cart.reduce((acc, item) => 
         item.checked ? acc + (item.product.price * item.count) : acc, 0
     );
@@ -31,7 +32,6 @@ export default function CartPage() {
                 </div>
 
                 <div className="flex flex-col lg:flex-row gap-8 items-start">
-                    
                     <div className="flex-[2] bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden w-full">
                         <div className="overflow-x-auto">
                             <table className="w-full text-left border-collapse">
@@ -48,16 +48,11 @@ export default function CartPage() {
                                 <tbody className="divide-y divide-gray-50">
                                     {cart.length === 0 ? (
                                         <tr>
-                                            <td colSpan="6" className="p-20 text-center">
+                                            <td colSpan="6" className="p-20 text-center text-gray-400">
                                                 <div className="flex flex-col items-center gap-4">
                                                     <ShoppingBag size={64} className="text-gray-200" />
-                                                    <p className="text-gray-400 font-medium text-lg">Sepetiniz şu an boş.</p>
-                                                    <button 
-                                                        onClick={() => navigate("/shop")} 
-                                                        className="bg-[#23A6F0] text-white px-8 py-3 rounded-md font-bold hover:bg-[#1b8ecf] transition-all"
-                                                    >
-                                                        Hemen Keşfet
-                                                    </button>
+                                                    <p>Sepetiniz şu an boş.</p>
+                                                    <button onClick={() => navigate("/shop")} className="text-[#23A6F0] underline">Alışverişe Başla</button>
                                                 </div>
                                             </td>
                                         </tr>
@@ -69,59 +64,29 @@ export default function CartPage() {
                                                         type="checkbox" 
                                                         checked={item.checked} 
                                                         onChange={() => dispatch(toggleItemCheck(item.product.id))}
-                                                        className="w-5 h-5 cursor-pointer rounded border-gray-300 text-[#23A6F0] focus:ring-[#23A6F0]"
+                                                        className="w-5 h-5 cursor-pointer rounded border-gray-300 text-[#23A6F0]"
                                                     />
                                                 </td>
                                                 <td className="p-6">
-                                                    <Link 
-                                                        to={`/shop/urun/${item.product.category_id}/${createSlug(item.product.name)}/${item.product.id}`}
-                                                        className="flex items-center gap-4 group/item"
-                                                    >
-                                                        <img 
-                                                            src={item.product.images[0]?.url} 
-                                                            className="w-20 h-24 object-cover rounded shadow-sm group-hover/item:opacity-80 transition-all" 
-                                                            alt={item.product.name} 
-                                                        />
+                                                    <Link to={`/shop/urun/${item.product.category_id}/${createSlug(item.product.name)}/${item.product.id}`} className="flex items-center gap-4">
+                                                        <img src={item.product.images[0]?.url} className="w-20 h-24 object-cover rounded shadow-sm" alt="" />
                                                         <div className="min-w-0">
-                                                            <p className="font-bold text-slate-800 group-hover/item:text-[#23A6F0] transition-colors truncate w-48 md:w-64">
-                                                                {item.product.name}
-                                                            </p>
-                                                            <p className="text-xs text-gray-400 mt-1 italic">Stok Durumu: {item.product.stock > 0 ? 'Mevcut' : 'Tükendi'}</p>
+                                                            <p className="font-bold text-slate-800 truncate w-48 md:w-64">{item.product.name}</p>
+                                                            <p className="text-xs text-gray-400 mt-1 italic">Stok: {item.product.stock}</p>
                                                         </div>
                                                     </Link>
                                                 </td>
                                                 <td className="p-6">
                                                     <div className="flex items-center justify-center gap-3 bg-gray-50 w-fit mx-auto rounded-lg p-1 border">
-                                                        <button 
-                                                            onClick={() => dispatch(updateItemCount(item.product.id, item.count - 1))}
-                                                            disabled={item.count <= 1}
-                                                            className="p-1.5 rounded-md hover:bg-white hover:text-red-500 disabled:opacity-30 transition-all"
-                                                        >
-                                                            <Minus size={14} />
-                                                        </button>
-                                                        <span className="font-bold w-6 text-center text-sm">{item.count}</span>
-                                                        <button 
-                                                            onClick={() => dispatch(updateItemCount(item.product.id, item.count + 1))}
-                                                            className="p-1.5 rounded-md hover:bg-white hover:text-[#23A6F0] transition-all"
-                                                        >
-                                                            <Plus size={14} />
-                                                        </button>
+                                                        <button onClick={() => dispatch(updateItemCount(item.product.id, item.count - 1))} disabled={item.count <= 1} className="p-1 text-red-400 disabled:opacity-30"><Minus size={14} /></button>
+                                                        <span className="font-bold text-sm w-4 text-center">{item.count}</span>
+                                                        <button onClick={() => dispatch(updateItemCount(item.product.id, item.count + 1))} className="p-1 text-[#23A6F0]"><Plus size={14} /></button>
                                                     </div>
                                                 </td>
-                                                <td className="p-6 font-bold text-slate-600 text-sm">
-                                                    {item.product.price.toFixed(2)} TL
-                                                </td>
-                                                <td className="p-6 font-extrabold text-[#23A6F0] text-sm">
-                                                    {(item.product.price * item.count).toFixed(2)} TL
-                                                </td>
+                                                <td className="p-6 font-bold text-slate-600 text-sm">{item.product.price.toFixed(2)} TL</td>
+                                                <td className="p-6 font-extrabold text-[#23A6F0] text-sm">{(item.product.price * item.count).toFixed(2)} TL</td>
                                                 <td className="p-6 text-right">
-                                                    <button 
-                                                        onClick={() => dispatch(removeFromCart(item.product.id))}
-                                                        className="text-gray-300 hover:text-red-500 transition-colors p-2"
-                                                        title="Ürünü Listeden Kaldır"
-                                                    >
-                                                        <Trash2 size={20} />
-                                                    </button>
+                                                    <button onClick={() => dispatch(removeFromCart(item.product.id))} className="text-gray-300 hover:text-red-500"><Trash2 size={20} /></button>
                                                 </td>
                                             </tr>
                                         ))
@@ -159,12 +124,14 @@ export default function CartPage() {
                                 </span>
                             </div>
                             <button 
+                                onClick={() => navigate("/create-order")}
                                 disabled={cart.filter(i => i.checked).length === 0}
-                                className="w-full bg-[#23A6F0] text-white py-4 rounded-lg font-bold shadow-lg shadow-blue-100 hover:bg-[#1b8ecf] hover:-translate-y-1 transition-all active:scale-95 disabled:bg-gray-200 disabled:shadow-none disabled:translate-y-0"
+                                className="w-full bg-[#23A6F0] text-white py-4 rounded-lg font-bold shadow-lg hover:bg-[#1b8ecf] hover:-translate-y-1 transition-all disabled:bg-gray-200"
                             >
                                 Sepeti Onayla
                             </button>
                         </div>
+                        
                         <div className="bg-white p-4 rounded-xl border border-dashed border-gray-200 flex gap-2">
                              <input type="text" placeholder="İndirim Kodu" className="flex-1 bg-gray-50 border-none rounded px-3 py-2 text-xs focus:ring-1 focus:ring-blue-500" />
                              <button className="bg-slate-800 text-white px-4 py-2 rounded text-xs font-bold">Uygula</button>

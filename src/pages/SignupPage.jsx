@@ -87,7 +87,7 @@ export default function SignupPage() {
             type="password"
             {...register("password", { 
               required: "Required", 
-              minLength: { value: 8, message: "Min 8 chars" },
+              minLength: { value: 4, message: "Min 4 chars" },
               pattern: { 
 
                 value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*._\-,:;])/, 

@@ -7,14 +7,23 @@ import {
     SET_ADDRESS 
 } from "../action/shoppingCartActions";
 
+export const SET_ADDRESS_LIST = "SET_ADDRESS_LIST";
+
 const initialState = {
     cart: [],
     payment: {},
-    address: {}
+    address: {},
+    addressList: []
 };
 
 const shoppingCartReducer = (state = initialState, action) => {
     switch (action.type) {
+        case SET_ADDRESS_LIST:
+            return {
+                ...state,
+                addressList: action.payload
+            };
+
         case ADD_TO_CART:
             const productToAdd = action.payload;
             const existingItem = state.cart.find(
@@ -49,11 +58,13 @@ const shoppingCartReducer = (state = initialState, action) => {
                         : item
                 )
             };
+
         case REMOVE_FROM_CART:
             return {
                 ...state,
                 cart: state.cart.filter((item) => item.product.id !== action.payload)
             };
+
         case TOGGLE_ITEM_CHECK:
             return {
                 ...state,

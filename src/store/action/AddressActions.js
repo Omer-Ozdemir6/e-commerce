@@ -1,27 +1,29 @@
-import axios from 'axios';
+import { axiosWithAuth } from "../../api/axiosWithAuth";
 
-const api = axios.create({
-    baseURL: 'https://workintech-fe-ecommerce.onrender.com',
-});
-
-api.interceptors.request.use((config) => {
-    const token = localStorage.getItem('token');
-    if (token) config.headers.Authorization = token;
-    return config;
-});
+export const SET_ADDRESS_LIST = "SET_ADDRESS_LIST";
 
 export const fetchAddresses = () => (dispatch) => {
-    return api.get('/user/address')
-        .then(res => dispatch({ type: "SET_ADDRESS_LIST", payload: res.data }))
-        .catch(err => console.error("Adres çekilemedi:", err));
+  axiosWithAuth().get("/user/address")
+    .then(res => dispatch({ type: SET_ADDRESS_LIST, payload: res.data }))
+    .catch(err => console.error("Adresler çekilemedi", err));
 };
 
-export const addAddress = (addressData) => (dispatch) => {
-    return api.post('/user/address', addressData)
-        .then(() => dispatch(fetchAddresses()));
+export const addAddress = (data) => (dispatch) => {
+  return axiosWithAuth().post("/user/address", data).then(() => dispatch(fetchAddresses()));
+};
+
+export const updateAddress = (data) => (dispatch) => {
+  return axiosWithAuth().put("/user/address", data).then(() => dispatch(fetchAddresses()));
 };
 
 export const deleteAddress = (addressId) => (dispatch) => {
-    return api.delete(`/user/address/${addressId}`)
-        .then(() => dispatch(fetchAddresses()));
+  return axiosWithAuth()
+    .delete(`/user/address/${addressId}`)
+    .then(() => {
+      dispatch(fetchAddresses());
+    })
+    .catch((err) => {
+      console.error("Adres silinirken hata oluştu:", err);
+      alert("Adres silinemedi, lütfen tekrar deneyin.");
+    });
 };
