@@ -16,6 +16,7 @@ import TeamPage from './pages/TeamPage';
 import AboutPage from './pages/AboutPage';
 import SignUpPage from './pages/SignupPage';
 import LoginPage from './pages/LoginPage';
+import PreviousOrdersPage from './pages/PreviousOrdersPage';
 
 import { useDispatch } from 'react-redux';
 import { verifyToken } from './store/action/clientAction';
@@ -52,15 +53,20 @@ export default function App() {
             <Route path="/about" element={<AboutPage />} />
             <Route path='/signup' element={<SignUpPage />} />
             <Route path="/login" element={<LoginPage />} />
-            
+
             <Route path="/create-order" element={
               <ProtectedRoute>
                 <CreateOrderPage />
               </ProtectedRoute>
             } />
 
-            <Route path="/order-success" element={<OrderSuccessPage />} />
+            <Route path="/user/orders" element={
+              <ProtectedRoute>
+                <PreviousOrdersPage />
+              </ProtectedRoute>
+            } />
 
+            <Route path="/order-success" element={<OrderSuccessPage />} />
           </Routes>
         </main>
 
