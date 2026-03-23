@@ -21,6 +21,7 @@ import { useDispatch } from 'react-redux';
 import { verifyToken } from './store/action/clientAction';
 import ProtectedRoute from './components/ProtectedRoute';
 import CreateOrderPage from './pages/CreateOrderPage';
+import OrderSuccessPage from './pages/OrderSuccessPage';
 
 export default function App() {
   const dispatch = useDispatch();
@@ -51,12 +52,15 @@ export default function App() {
             <Route path="/about" element={<AboutPage />} />
             <Route path='/signup' element={<SignUpPage />} />
             <Route path="/login" element={<LoginPage />} />
-            <Route path="/create-order"element={
-            <ProtectedRoute>
-            <CreateOrderPage />
-            </ProtectedRoute>
-            } 
-             />
+            
+            <Route path="/create-order" element={
+              <ProtectedRoute>
+                <CreateOrderPage />
+              </ProtectedRoute>
+            } />
+
+            <Route path="/order-success" element={<OrderSuccessPage />} />
+
           </Routes>
         </main>
 

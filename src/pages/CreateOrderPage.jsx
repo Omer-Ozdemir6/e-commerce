@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { fetchAddresses, deleteAddress } from '../store/action/addressActions';
 import { fetchCards, deleteCard } from '../store/action/paymentActions';
+import { createOrder } from '../store/action/orderActions';
 import AddressForm from '../components/AddressForm';
 import CardForm from '../components/CardForm';
-import { Plus, Trash2, Edit2, User, Phone, CreditCard, ChevronRight, Check, Info } from 'lucide-react';
+import { Plus, Trash2, Edit2, User, Phone, CreditCard, ChevronRight, Check } from 'lucide-react';
 
 export default function CreateOrderPage() {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
+    
     const { cart, addressList, cardList } = useSelector((state) => state.shoppingCart);
     
     const [activeStep, setActiveStep] = useState(1);
@@ -19,9 +23,7 @@ export default function CreateOrderPage() {
     const [isSameAddress, setIsSameAddress] = useState(true);
     const [agreed, setAgreed] = useState(false);
 
-
     const activeAddress = addressList?.find(a => a.id === selectedShipping);
-
 
     const totalAmount = cart.reduce((acc, item) => 
         item.checked ? acc + (item.product.price * item.count) : acc, 0
@@ -34,20 +36,54 @@ export default function CreateOrderPage() {
         dispatch(fetchCards());
     }, [dispatch]);
 
+    const handleFinishOrder = () => {
+        if (!selectedCard) return alert("Lütfen ödeme için bir kart seçin!");
+        if (!agreed) return alert("Lütfen satış sözleşmesini onaylayın!");
+
+        const selectedCardInfo = cardList.find(c => c.id === selectedCard);
+
+        const orderPayload = {
+            address_id: selectedShipping,
+            order_date: new Date().toISOString(),
+            card_no: Number(selectedCardInfo.card_no),
+            card_name: selectedCardInfo.name_on_card,
+            card_expire_month: selectedCardInfo.expire_month,
+            card_expire_year: selectedCardInfo.expire_year,
+            card_ccv: 321,
+            price: grandTotal,
+            products: cart.map(item => ({
+                product_id: item.product.id,
+                count: item.count,
+                detail: `${item.product.name} - ${item.product.description?.slice(0, 30)}`
+            }))
+        };
+
+
+        dispatch(createOrder(orderPayload))
+            .then(() => {
+                alert("Tebrikler! Siparişininiz başarıyla alındı. 🎉");
+
+                navigate("/order-success");
+            })
+            .catch((err) => {
+                alert("Sipariş oluşturulurken bir hata oluştu. Lütfen tekrar deneyin.");
+                console.error("Order Error:", err);
+            });
+    };
+
     const handleNextStep = () => {
         if (activeStep === 1) {
             if (!selectedShipping) return alert("Lütfen devam etmek için bir adres seçin!");
             setActiveStep(2);
         } else {
-            if (!selectedCard) return alert("Lütfen ödeme için bir kart seçin!");
-            if (!agreed) return alert("Lütfen satış sözleşmesini onaylayın!");
-            alert("Siparişiniz başarıyla alındı! Teşekkür ederiz.");
+            handleFinishOrder();
         }
     };
 
     return (
         <div className="bg-[#F6F6F6] min-h-screen py-8 px-4 md:px-20 font-sans">
             <div className="container mx-auto">
+
 
                 <div className="flex bg-white rounded-lg shadow-sm mb-6 overflow-hidden border border-gray-100">
                     <div 
@@ -66,15 +102,14 @@ export default function CreateOrderPage() {
                             {activeStep === 2 && <button className="text-[10px] text-[#23A6F0] font-bold border border-[#23A6F0] px-2 py-1 rounded hover:bg-blue-50">DEĞİŞTİR</button>}
                         </div>
                     </div>
-                    <div 
-                        className={`flex-1 p-5 border-l transition-all ${activeStep === 2 ? 'border-b-4 border-[#23A6F0] bg-blue-50/10' : 'opacity-50'}`}
-                    >
+                    <div className={`flex-1 p-5 border-l transition-all ${activeStep === 2 ? 'border-b-4 border-[#23A6F0] bg-blue-50/10' : 'opacity-50'}`}>
                         <h3 className={`font-bold text-lg ${activeStep === 2 ? 'text-[#23A6F0]' : 'text-gray-400'}`}>Ödeme Seçenekleri</h3>
                         <p className="text-[10px] text-gray-400 mt-1 italic">Güvenli ödeme yöntemini seçiniz.</p>
                     </div>
                 </div>
 
                 <div className="flex flex-col lg:flex-row gap-8 items-start">
+
 
                     <div className="flex-[3] w-full space-y-6">
                         
@@ -89,14 +124,14 @@ export default function CreateOrderPage() {
                                     </label>
                                 </div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div onClick={() => { setEditData(null); setShowForm(true); }} className="border-2 border-dashed border-gray-200 rounded-xl p-10 flex flex-col items-center justify-center gap-3 cursor-pointer hover:bg-blue-50/50 hover:border-[#23A6F0] transition-all group h-44">
+                                    <div onClick={() => { setEditData(null); setShowForm(true); }} className="border-2 border-dashed border-gray-200 rounded-xl p-10 flex flex-col items-center justify-center gap-3 cursor-pointer hover:bg-blue-50/50 hover:border-[#23A6F0] transition-all h-44">
                                         <Plus className="text-[#23A6F0]" size={32}/>
                                         <span className="font-bold text-slate-600">Yeni Adres Ekle</span>
                                     </div>
                                     {addressList.map(addr => (
                                         <div key={addr.id} className={`p-5 border-2 rounded-xl cursor-pointer relative transition-all h-44 ${selectedShipping === addr.id ? 'border-[#23A6F0] bg-blue-50/10' : 'border-gray-100 bg-white'}`} onClick={() => setSelectedShipping(addr.id)}>
                                             <div className="flex justify-between items-start mb-4">
-                                                <span className="font-bold text-xs uppercase tracking-widest text-[#252B42]">{addr.title}</span>
+                                                <span className="font-bold text-xs uppercase text-[#252B42]">{addr.title}</span>
                                                 <div className="flex gap-3">
                                                     <button onClick={(e) => { e.stopPropagation(); setEditData(addr); setShowForm(true); }} className="text-gray-400 hover:text-[#23A6F0]"><Edit2 size={16} /></button>
                                                     <button onClick={(e) => { e.stopPropagation(); if(window.confirm("Bu adresi silmek istediğinize emin misiniz?")) dispatch(deleteAddress(addr.id)); }} className="text-gray-300 hover:text-red-500"><Trash2 size={16} /></button>
@@ -129,7 +164,7 @@ export default function CreateOrderPage() {
                                     <div className="flex-1 space-y-4">
                                         <div className="flex justify-between items-center mb-4">
                                             <h4 className="font-bold text-sm text-slate-700">Kart Bilgileri</h4>
-                                            <button onClick={() => setShowCardForm(true)} className="text-xs text-[#23A6F0] font-bold underline">Başka bir Kart ile Öde</button>
+                                            <button onClick={() => setShowCardForm(true)} className="text-xs text-[#23A6F0] font-bold underline hover:text-[#1b8ecf]">Başka bir Kart ile Öde</button>
                                         </div>
                                         <div className="space-y-3">
                                             {cardList.map(card => (
@@ -150,6 +185,7 @@ export default function CreateOrderPage() {
                                                     <button onClick={(e) => { e.stopPropagation(); if(window.confirm("Bu kartı silmek istiyor musunuz?")) dispatch(deleteCard(card.id)); }} className="text-gray-300 hover:text-red-500 transition-colors"><Trash2 size={16}/></button>
                                                 </div>
                                             ))}
+                                            {cardList.length === 0 && <p className="text-xs text-gray-400 italic">Henüz kayıtlı bir kartınız yok.</p>}
                                         </div>
                                     </div>
 
@@ -179,6 +215,7 @@ export default function CreateOrderPage() {
                         )}
                     </div>
 
+
                     <aside className="flex-1 min-w-[320px] space-y-4 lg:sticky lg:top-8">
 
                         <div className="bg-white p-5 rounded-lg border border-gray-100 shadow-sm">
@@ -204,7 +241,7 @@ export default function CreateOrderPage() {
                             {activeStep === 1 ? "Kaydet ve Devam Et" : "Ödemeyi Tamamla"}
                             <ChevronRight size={18} />
                         </button>
- 
+
                         <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-100">
                             <h3 className="font-bold text-lg text-[#252B42] mb-6 uppercase tracking-wide text-center">Sipariş Özeti</h3>
                             <div className="space-y-4 text-xs">
@@ -241,7 +278,7 @@ export default function CreateOrderPage() {
             {showForm && (
                 <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
                     <div className="absolute inset-0 bg-black/60 backdrop-blur-md" onClick={() => setShowForm(false)}></div>
-                    <div className="relative z-[10000] w-full max-w-lg">
+                    <div className="relative z-[10000] w-full max-w-lg shadow-2xl">
                         <AddressForm editAddress={editData} closeForm={() => setShowForm(false)} />
                     </div>
                 </div>
@@ -250,7 +287,7 @@ export default function CreateOrderPage() {
             {showCardForm && (
                 <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
                     <div className="absolute inset-0 bg-black/60 backdrop-blur-md" onClick={() => setShowCardForm(false)}></div>
-                    <div className="relative z-[10000] w-full max-w-lg">
+                    <div className="relative z-[10000] w-full max-w-lg shadow-2xl">
                         <CardForm closeForm={() => setShowCardForm(false)} />
                     </div>
                 </div>
