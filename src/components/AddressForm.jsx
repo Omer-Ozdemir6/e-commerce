@@ -1,7 +1,7 @@
 
 import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
-import { addAddress, updateAddress } from '../store/action/addressActions';
+import { addAddress, updateAddress } from '../store/action/addressActionsTEMP';
 
 const cities = ["İstanbul", "Ankara", "İzmir", "Bursa", "Antalya", "Adana", "Konya"];
 
